@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Employee
+{% endblock title %}
+
+{% block content %}
+<h1>Employee List</h1>
+<p><a href="{% url "employee_create" %}"> <i class="bi bi-plus-circle"></i> Create a new Employee </a></p>
+
+<table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">S.No.</th>
+        <th scope="col">First Name</th>
+        <th scope="col">Last Name</th>
+        <th scope="col">Email</th>
+        <th scope="col">Department</th>
+        <th scope="col">Start Date</th>
+        <th scope="col">Onboard Status</th>
+        <th scope="col">Mark as Onboarded</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for object in object_list %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td><a href="{{ object.get_absolute_url }}">{{ object.first_name }}</a></td>
+                <td>{{ object.last_name }}</td>
+                <td>{{ object.email }}</td>
+                <td>{{ object.department }}</td>
+                <td>{{ object.start_date }}</td>
+                <td class="{% if object.is_onboarded %}success{% else %}danger{% endif %}">{% if object.is_onboarded %}<i class="bi bi-check-square-fill"></i>{% else %}<i class="bi bi-x-square-fill"></i>{% endif %}</td>
+                <td>
+                    <form method="post" action="{{ object.get_absolute_mark_as_onboarded_url }}">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <button {% if object.is_onboarded %}disabled{% endif %} type="submit" class="btn btn-primary">
+                          Mark
+                        </button>
+                      </form>
+                </td>
+                
+                <td class="">
+                    <a class="" href="{{ object.get_absolute_url }}"><i class="bi bi-eye secondary"></i></a>
+                    <a class="" href="{{ object.get_absolute_update_url }}"><i class="bi bi-pencil-square warning"></i></a>
+                    <a href="{{ object.get_absolute_delete_url }}"><i class="bi bi-trash-fill danger"></i></a>
+                </td>
+            </tr>
+        {% empty %}
+            <td>No Employee Found</p>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock content %}
